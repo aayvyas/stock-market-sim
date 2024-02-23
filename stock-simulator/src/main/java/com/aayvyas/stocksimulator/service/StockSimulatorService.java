@@ -3,12 +3,14 @@ package com.aayvyas.stocksimulator.service;
 
 import com.aayvyas.stocksimulator.models.Stock;
 import com.aayvyas.stocksimulator.models.Transaction;
+import com.aayvyas.stocksimulator.repository.TransactionsRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
@@ -24,9 +26,15 @@ public class StockSimulatorService {
 
     private final KafkaTemplate<String, Transaction> kafkaTemplate;
 
+    private final TransactionsRepository transactionsRepository;
+
     List<Stock> stocks = new ArrayList<>();
 
+    List<Transaction> transactions = new ArrayList<>();
 
+    /**
+     * Infinitely make random changes to the stocks in memory to simulate buying and selling of stocks
+     * */
     public void sim(String message) throws InterruptedException {
         while (true) {
             log.info("Sending Message to kafka");
@@ -56,11 +64,14 @@ public class StockSimulatorService {
         stocks.add(Stock.builder().name("HDFCBANK").id(String.valueOf(UUID.randomUUID())).LTP(Double.valueOf(1440)).build());
         stocks.add(Stock.builder().name("TATAMOTORS").id(String.valueOf(UUID.randomUUID())).LTP(Double.valueOf(938)).build());
         stocks.add(Stock.builder().name("IRCTC").id(String.valueOf(UUID.randomUUID())).LTP(Double.valueOf(945)).build());
-
-
-
-
     }
+
+    Flux<Transaction> bulkInsertToDb(){
+        // read transactions from Kafka and insert into db
+        return Flux.fromIterable(transactions);
+    }
+
+
 
 }
 

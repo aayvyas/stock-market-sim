@@ -30,18 +30,10 @@ public class StockSimulatorController {
 
     }
 
-
     @PostMapping("/add")
     @ResponseStatus(HttpStatus.ACCEPTED)
     void add(){
         stockSimulatorService.addStocks();
     }
-
-
-
-
-
-
-
 
 }
