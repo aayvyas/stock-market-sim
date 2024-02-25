@@ -58,55 +58,30 @@ const StockChart = ({ stockId }: { stockId: string }) => {
         setStockState(() => stock);
         // @ts-ignore
         setData((prev) => {
-          if (prev.labels.length > 20) {
-            return {
-              ...prev,
-              datasets: [
-                {
-                  label: "LTP",
-                  data: [
-                    ...prev.datasets[0].data.slice(
-                      1,
-                      prev.datasets[0].data.length - 1
-                    ),
-                    {
-                      x: new Date(Date.parse(stock.timestamp)),
-                      y: stock.price,
-                    },
-                  ],
-                },
-              ],
-              labels: [
-                ...prev.labels.slice(1, prev.labels.length - 1),
-                new Date(Date.parse(stock.timestamp)),
-              ],
-            };
-          } else {
-            return {
-              ...prev,
-              datasets: [
-                {
-                  label: "LTP",
-                  data: [
-                    ...prev.datasets[0].data,
-                    {
-                      x: new Date(Date.parse(stock.timestamp)),
-                      y: stock.price,
-                    },
-                  ],
-                },
-              ],
-              labels: [...prev.labels, new Date(Date.parse(stock.timestamp))],
-            };
-          }
+          return {
+            ...prev,
+            datasets: [
+              {
+                label: "LTP",
+                data: [
+                  ...prev.datasets[0].data,
+                  {
+                    x: new Date(Date.parse(stock.timestamp)),
+                    y: stock.price,
+                  },
+                ],
+              },
+            ],
+            labels: [...prev.labels, new Date(Date.parse(stock.timestamp))],
+          };
         });
+
+        // clear connection
+        return () => {
+          socket.disconnect();
+        };
       });
     });
-
-    // clear connection
-    return () => {
-      socket.disconnect();
-    };
   }, []);
 
   return (

@@ -35,15 +35,14 @@ public class StockSimulatorService {
     /**
      * Infinitely make random changes to the stocks in memory to simulate buying and selling of stocks
      * */
-    public void sim(String message) throws InterruptedException {
+    public void sim() throws InterruptedException {
         while (true) {
             log.info("Sending Message to kafka");
-            System.out.println("Sending message");
             TopicBuilder.name("update").build();
             kafkaTemplate.setDefaultTopic("update");
-            Thread.sleep((long) (Math.random() * 1000));
-
+            Thread.sleep((long) (Math.random() * 500));
             Stock stock = stocks.get((int) Math.floor(Math.random() * 10 % 5));
+            log.info(stock.toString());
             Double price = Math.floor(Math.random() * 10) >= 5 ? stock.getLTP() + Math.random()  * 10 : stock.getLTP() - Math.random()  * 10;
             stock.setLTP(price);
             kafkaTemplate.send("update", stock.getName() ,Transaction.builder()

@@ -19,11 +19,11 @@ public class StockSimulatorController {
 
     @PostMapping("/start")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    void startSimulation(@RequestParam String message){
+    void startSimulation(){
 
         try {
-            log.info( "Message Received {} " ,message);
-            stockSimulatorService.sim(message);
+            log.info("Starting Simulation...");
+            stockSimulatorService.sim();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

@@ -7,6 +7,10 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -19,7 +23,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Service
-public class OrderService {
+public class OrderService implements IOrderService {
 
 
     @Autowired
@@ -64,4 +68,11 @@ public class OrderService {
                 .skip(start)
                 .take(limit);
     }
+
+
+    public Mono<Page<Transaction>> getPaginatedTransactionsPageable(Pageable pageable) {
+        return transactionsRepository.findAllBy(pageable).collectList().zipWith(this.transactionsRepository.count())
+                .map(p -> new PageImpl<>(p.getT1(), pageable,p.getT2()));
+    }
+
 }

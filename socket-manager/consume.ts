@@ -20,7 +20,7 @@ const getUpdates = async (io: Server<any, any>) => {
   const consumer = KafkaClient.consumer({ groupId: randomUUID().toString() });
 
   await consumer.connect();
-  await consumer.subscribe({ topic: "update", fromBeginning: false });
+  await consumer.subscribe({ topic: "update", fromBeginning: true });
 
   await consumer.run({
     eachMessage: async ({ topic, partition, message }) => {
